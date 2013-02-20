@@ -20,6 +20,8 @@ __DATA__
 Masayuki Matsuki
 y.songmu@gmail.com
 Plack::Middleware::Woothee
+middleware
+woothee
 
 # computer terms
 API
