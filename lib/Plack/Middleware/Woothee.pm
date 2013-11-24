@@ -6,16 +6,98 @@ use warnings;
 our $VERSION = '0.01';
 
 use parent 'Plack::Middleware';
-use Woothee;
 
 sub call {
     my($self, $env) = @_;
 
-    $env->{'psgix.woothee'} = Woothee->parse($env->{HTTP_USER_AGENT});
+    $env->{'psgix.woothee'} = Plack::Middleware::Woothee::Object->new($env);
+
     $self->app->($env);
 }
 
 1;
+
+package Plack::Middleware::Woothee::Object;
+use strict;
+use warnings;
+
+sub new {
+    my ($class, $env) = @_;
+
+    bless {
+        env => $env,
+    }, $class;
+}
+
+sub env { $_[0]->{env} }
+
+sub name {
+    return $_[0]->_get('name');
+}
+
+sub category {
+    return $_[0]->_get('category');
+}
+
+sub os {
+    return $_[0]->_get('os');
+}
+
+sub vendor {
+    return $_[0]->_get('vendor');
+}
+
+sub version {
+    return $_[0]->_get('version');
+}
+
+sub _get {
+    my ($self, $key) = @_;
+
+    unless ($self->{_cache}{parse}) {
+        $self->_parse;
+    }
+
+    return $self->{_cache}{parse}{$key};
+}
+
+sub _parse {
+    my $self = shift;
+
+    $self->_load_woothee;
+
+    $self->{_cache}{parse}
+        ||= Woothee->parse($self->env->{HTTP_USER_AGENT});
+}
+
+sub is_crawler {
+    my $self = shift;
+
+    unless ( exists $self->{_cache}{is_crawler} ) {
+        $self->_is_crawler;
+    }
+
+    return $self->{_cache}{is_crawler};
+}
+
+sub _is_crawler {
+    my $self = shift;
+
+    $self->_load_woothee;
+
+    $self->{_cache}{is_crawler}
+        ||= Woothee->is_crawler($self->env->{HTTP_USER_AGENT});
+}
+
+sub _load_woothee {
+    unless ($_[0]->{_load_woothee}) {
+        require Woothee;
+        $_[0]->{_load_woothee} = 1;
+    }
+}
+
+1;
+
 __END__
 
 =head1 NAME
