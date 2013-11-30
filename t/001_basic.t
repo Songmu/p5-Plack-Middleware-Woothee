@@ -12,6 +12,7 @@ Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gec
 _UA_
 chomp $UA;
 
+# object
 {
     my $app = Plack::Middleware::Woothee->wrap(sub {
         my $env = shift;
@@ -27,6 +28,7 @@ chomp $UA;
     };
 }
 
+# hash access
 {
     my $app = Plack::Middleware::Woothee->wrap(sub {
         my $env = shift;
@@ -63,6 +65,7 @@ chomp $UA;
     };
 }
 
+# method call
 {
     my @list = (
         [ 'name'     => 'Safari' ],
