@@ -6,6 +6,7 @@ use warnings;
 our $VERSION = '0.01';
 
 use parent 'Plack::Middleware';
+use Woothee;
 
 sub call {
     my($self, $env) = @_;
@@ -64,8 +65,6 @@ sub _get {
 sub parse {
     my $self = shift;
 
-    $self->_load_woothee;
-
     $self->{parse} ||= Woothee->parse($self->env->{HTTP_USER_AGENT});
 
     for my $key (keys %{$self->{parse}}) {
@@ -77,18 +76,10 @@ sub is_crawler {
     my $self = shift;
 
     unless ( exists $self->{is_crawler} ) {
-        $self->_load_woothee;
         $self->{is_crawler} ||= Woothee->is_crawler($self->env->{HTTP_USER_AGENT});
     }
 
     return $self->{is_crawler};
-}
-
-sub _load_woothee {
-    unless ($_[0]->{_load_woothee}) {
-        require Woothee;
-        $_[0]->{_load_woothee} = 1;
-    }
 }
 
 1;
