@@ -65,6 +65,46 @@ chomp $UA;
     };
 }
 
+# is_crawler
+{
+    my $app = Plack::Middleware::Woothee->wrap(sub {
+        my $env = shift;
+        [ 200, [], [ $env->{'psgix.woothee'}->is_crawler ] ];
+    });
+
+    test_psgi $app, sub {
+        my $cb  = shift;
+
+        subtest UNKOWN => sub {
+            my $res = $cb->(GET '/');
+
+            is $res->code, 200;
+            is $res->content, '0';
+        };
+
+        subtest "iPhone: is_crawler" => sub {
+            my $res = $cb->(
+                GET '/',
+                'User-Agent' => $UA,
+            );
+
+            is $res->code, 200;
+            is $res->content, '0';
+        };
+
+        subtest "Googlebot: is_crawler" => sub {
+            my $res = $cb->(
+                GET '/',
+                'User-Agent' => 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+            );
+
+            is $res->code, 200;
+            is $res->content, '1';
+        };
+
+    };
+}
+
 # method call
 {
     my @list = (
