@@ -28,6 +28,42 @@ chomp $UA;
 }
 
 {
+    my $app = Plack::Middleware::Woothee->wrap(sub {
+        my $env = shift;
+        $env->{'psgix.woothee'}->parse;
+        my $content = join ',',
+            $env->{'psgix.woothee'}{name},
+            $env->{'psgix.woothee'}{category},
+            $env->{'psgix.woothee'}{os},
+            $env->{'psgix.woothee'}{vendor},
+            $env->{'psgix.woothee'}{version};
+        [ 200, [], [ $content ] ];
+    });
+
+    test_psgi $app, sub {
+        my $cb  = shift;
+
+        subtest UNKOWN => sub {
+            my $res = $cb->(GET '/');
+
+            is $res->code, 200;
+            is $res->content, 'UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN';
+        };
+
+        subtest "iPhone: name" => sub {
+            my $res = $cb->(
+                GET '/',
+                'User-Agent' => $UA,
+            );
+
+            is $res->code, 200;
+            is $res->content, 'Safari,smartphone,iPhone,Apple,3.0';
+        };
+
+    };
+}
+
+{
     my @list = (
         [ 'name'     => 'Safari' ],
         [ 'category' => 'smartphone' ],

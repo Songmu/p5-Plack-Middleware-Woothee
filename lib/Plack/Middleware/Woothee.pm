@@ -54,39 +54,34 @@ sub version {
 sub _get {
     my ($self, $key) = @_;
 
-    unless ($self->{_cache}{parse}) {
-        $self->_parse;
+    unless ($self->{$key}) {
+        $self->parse;
     }
 
-    return $self->{_cache}{parse}{$key};
+    return $self->{$key};
 }
 
-sub _parse {
+sub parse {
     my $self = shift;
 
     $self->_load_woothee;
 
-    $self->{_cache}{parse}
-        ||= Woothee->parse($self->env->{HTTP_USER_AGENT});
+    $self->{parse} ||= Woothee->parse($self->env->{HTTP_USER_AGENT});
+
+    for my $key (keys %{$self->{parse}}) {
+        $self->{$key} = delete $self->{parse}{$key};
+    }
 }
 
 sub is_crawler {
     my $self = shift;
 
-    unless ( exists $self->{_cache}{is_crawler} ) {
-        $self->_is_crawler;
+    unless ( exists $self->{is_crawler} ) {
+        $self->_load_woothee;
+        $self->{is_crawler} ||= Woothee->is_crawler($self->env->{HTTP_USER_AGENT});
     }
 
-    return $self->{_cache}{is_crawler};
-}
-
-sub _is_crawler {
-    my $self = shift;
-
-    $self->_load_woothee;
-
-    $self->{_cache}{is_crawler}
-        ||= Woothee->is_crawler($self->env->{HTTP_USER_AGENT});
+    return $self->{is_crawler};
 }
 
 sub _load_woothee {
