@@ -11,11 +11,79 @@ use Woothee;
 sub call {
     my($self, $env) = @_;
 
-    $env->{'psgix.woothee'} = Woothee->parse($env->{HTTP_USER_AGENT});
+    $env->{'psgix.woothee'} = Plack::Middleware::Woothee::Object->new($env);
+
     $self->app->($env);
 }
 
 1;
+
+package Plack::Middleware::Woothee::Object;
+use strict;
+use warnings;
+
+sub new {
+    my ($class, $env) = @_;
+
+    bless {
+        env => $env,
+    }, $class;
+}
+
+sub env { $_[0]->{env} }
+
+sub name {
+    return $_[0]->_get('name');
+}
+
+sub category {
+    return $_[0]->_get('category');
+}
+
+sub os {
+    return $_[0]->_get('os');
+}
+
+sub vendor {
+    return $_[0]->_get('vendor');
+}
+
+sub version {
+    return $_[0]->_get('version');
+}
+
+sub _get {
+    my ($self, $key) = @_;
+
+    unless ($self->{$key}) {
+        $self->parse;
+    }
+
+    return $self->{$key};
+}
+
+sub parse {
+    my $self = shift;
+
+    $self->{parse} ||= Woothee->parse($self->env->{HTTP_USER_AGENT});
+
+    for my $key (keys %{$self->{parse}}) {
+        $self->{$key} = delete $self->{parse}{$key};
+    }
+}
+
+sub is_crawler {
+    my $self = shift;
+
+    unless ( exists $self->{is_crawler} ) {
+        $self->{is_crawler} ||= Woothee->is_crawler($self->env->{HTTP_USER_AGENT});
+    }
+
+    return $self->{is_crawler};
+}
+
+1;
+
 __END__
 
 =head1 NAME
