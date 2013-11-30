@@ -29,3 +29,11 @@ Build
 _build/*
 tmp/
 README
+/Plack-Middleware-Woothee-*
+/.build
+/_build_params
+/Build
+/Build.bat
+!Build/
+!META.json
+!LICENSE

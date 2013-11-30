@@ -1,4 +1,6 @@
 Revision history for Perl extension Plack::Middleware::Woothee
 
+{{$NEXT}}
+
 0.01    Wed Feb 20 19:26:00 2013
     - original version
