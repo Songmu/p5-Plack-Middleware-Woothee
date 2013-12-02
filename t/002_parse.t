@@ -49,6 +49,35 @@ chomp $UA;
     };
 }
 
+# parse immediately, and hash access
+{
+    my $app = Plack::Middleware::Woothee->wrap(sub {
+        my $env = shift;
+        my $content = join ',',
+            $env->{'psgix.woothee'}{name},
+            $env->{'psgix.woothee'}{category},
+            $env->{'psgix.woothee'}{os},
+            $env->{'psgix.woothee'}{vendor},
+            $env->{'psgix.woothee'}{version};
+        [ 200, [], [ $content ] ];
+    }, parse_all_req => 1);
+
+    test_psgi $app, sub {
+        my $cb  = shift;
+
+        subtest "parse immediately" => sub {
+            my $res = $cb->(
+                GET '/',
+                'User-Agent' => $UA,
+            );
+
+            is $res->code, 200;
+            is $res->content, 'Safari,smartphone,iPhone,Apple,3.0';
+        };
+
+    };
+}
+
 # method call
 {
     my @list = (
