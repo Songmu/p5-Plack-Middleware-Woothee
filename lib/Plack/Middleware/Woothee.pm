@@ -7,10 +7,14 @@ our $VERSION = '0.01';
 
 use parent 'Plack::Middleware';
 
+use Plack::Util::Accessor qw/parse_all_req/;
+
 sub call {
     my($self, $env) = @_;
 
     $env->{'psgix.woothee'} = Plack::Middleware::Woothee::Object->new(user_agent => $env->{HTTP_USER_AGENT});
+
+    $env->{'psgix.woothee'}->parse if $self->parse_all_req;
 
     $self->app->($env);
 }
