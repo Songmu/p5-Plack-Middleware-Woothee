@@ -3,7 +3,7 @@ use 5.008_001;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use parent 'Plack::Middleware';
 
@@ -93,7 +93,7 @@ Plack::Middleware::Woothee - Set woothee information based on User-Agent
 
 =head1 VERSION
 
-This document describes Plack::Middleware::Woothee version 0.01.
+This document describes Plack::Middleware::Woothee version 0.02.
 
 =head1 SYNOPSIS
 

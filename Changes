@@ -2,5 +2,9 @@ Revision history for Perl extension Plack::Middleware::Woothee
 
 {{$NEXT}}
 
+0.02 2013-12-08T06:55:28Z
+    - parse lazily and add methods for parsed results
+        (set 'parse_all_req' if you want to parse UA immediately)
+
 0.01    Wed Feb 20 19:26:00 2013
     - original version
