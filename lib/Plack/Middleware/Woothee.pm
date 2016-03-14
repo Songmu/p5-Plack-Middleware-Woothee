@@ -141,7 +141,7 @@ You can use this information in your application.
 
 =head2 parser
 
-Switch parser from B<Woothee>(default) to something. A module must have the C<parse> methods, and should have the C<is_crawler> method.
+Switch parser from B<Woothee>(default) to something. A module must have a C<parse> methods, and should have an C<is_crawler> method.
 
 =head1 DEPENDENCIES
 
