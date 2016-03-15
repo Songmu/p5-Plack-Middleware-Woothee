@@ -29,6 +29,12 @@ this to \`$env->{'psgix.woothee'}\`.
 
 You can use this information in your application.
 
+# MIDDLEWARE OPTIONS
+
+## parser
+
+Switch parser from **Woothee**(default) to something. A module must have a `parse` methods, and should have an `is_crawler` method.
+
 # DEPENDENCIES
 
 Perl 5.8.1 or later.
@@ -41,7 +47,7 @@ to cpan-RT.
 
 # SEE ALSO
 
-[perl](http://search.cpan.org/perldoc?perl) [Woothee](http://search.cpan.org/perldoc?Woothee)
+[perl](https://metacpan.org/pod/perl) [Woothee](https://metacpan.org/pod/Woothee)
 
 # AUTHOR
 
