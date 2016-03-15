@@ -7,12 +7,32 @@ our $VERSION = '0.02';
 
 use parent 'Plack::Middleware';
 
-use Plack::Util::Accessor qw/parse_all_req/;
+use Plack::Util::Accessor qw/
+    parse_all_req
+    parser
+/;
+
+sub prepare_app {
+    my ($self) = @_;
+
+    unless ($self->parser) {
+        $self->parser('Woothee');
+    }
+
+    LOAD_PARSER: {
+        my $file = $self->parser;
+        $file =~ s!::!/!g;
+        require "$file.pm"; ## no critic
+    }
+}
 
 sub call {
     my($self, $env) = @_;
 
-    $env->{'psgix.woothee'} = Plack::Middleware::Woothee::Object->new(user_agent => $env->{HTTP_USER_AGENT});
+    $env->{'psgix.woothee'} = Plack::Middleware::Woothee::Object->new(
+        parser     => $self->parser,
+        user_agent => $env->{HTTP_USER_AGENT},
+    );
 
     $env->{'psgix.woothee'}->parse if $self->parse_all_req;
 
@@ -24,7 +44,6 @@ sub call {
 package Plack::Middleware::Woothee::Object;
 use strict;
 use warnings;
-use Woothee;
 
 sub new {
     my ($class, %args) = @_;
@@ -66,7 +85,7 @@ sub _get {
 sub parse {
     my $self = shift;
 
-    $self->{parse} ||= Woothee->parse($self->{user_agent});
+    $self->{parse} ||= $self->{parser}->parse($self->{user_agent});
 
     for my $key (keys %{$self->{parse}}) {
         $self->{$key} = delete $self->{parse}{$key};
@@ -77,7 +96,7 @@ sub is_crawler {
     my $self = shift;
 
     unless ( exists $self->{is_crawler} ) {
-        $self->{is_crawler} ||= Woothee->is_crawler($self->{user_agent});
+        $self->{is_crawler} ||= $self->{parser}->is_crawler($self->{user_agent});
     }
 
     return $self->{is_crawler};
@@ -117,6 +136,12 @@ This middleware get woothee information based on User-Agent and assign
 this to `$env->{'psgix.woothee'}`.
 
 You can use this information in your application.
+
+=head1 MIDDLEWARE OPTIONS
+
+=head2 parser
+
+Switch parser from B<Woothee>(default) to something. A module must have a C<parse> methods, and should have an C<is_crawler> method.
 
 =head1 DEPENDENCIES
 
