@@ -75,9 +75,9 @@
          "web" : "https://github.com/Songmu/p5-Plack-Middleware-Woothee"
       }
    },
-   "version" : "0.02",
+   "version" : "0.03",
    "x_contributors" : [
-      "Dai Okabayashi <bayashi@cpan.org>"
+      "bayashi <bayashi@cpan.org>"
    ],
    "x_serialization_backend" : "JSON::PP version 2.27300"
 }
