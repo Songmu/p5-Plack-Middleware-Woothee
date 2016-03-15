@@ -2,6 +2,9 @@ Revision history for Perl extension Plack::Middleware::Woothee
 
 {{$NEXT}}
 
+0.04 2016-03-15T14:13:09Z
+    - no changes, just do minil release again
+
 0.03 2016-03-15T14:06:41Z
     - add 'parser' option for switching UA parser
     - fix POD

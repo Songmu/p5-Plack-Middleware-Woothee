@@ -75,7 +75,7 @@
          "web" : "https://github.com/Songmu/p5-Plack-Middleware-Woothee"
       }
    },
-   "version" : "0.03",
+   "version" : "0.04",
    "x_contributors" : [
       "bayashi <bayashi@cpan.org>"
    ],

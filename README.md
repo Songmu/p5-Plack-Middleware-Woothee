@@ -4,7 +4,7 @@ Plack::Middleware::Woothee - Set woothee information based on User-Agent
 
 # VERSION
 
-This document describes Plack::Middleware::Woothee version 0.03.
+This document describes Plack::Middleware::Woothee version 0.04.
 
 # SYNOPSIS
 
